@@ -14,7 +14,7 @@ gcs_conn_id = 'google_cloud_storage'
 local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
 
 def upload_to_gcs():
-    bucket_name = bucket_name,  # Your GCS bucket name
+    bucket_name = bucket_name  # Your GCS bucket name
     gcs_conn_id = 'google_cloud_storage'
     local_file_path = local_file_path
     upload_task = LocalFilesystemToGCSOperator(
