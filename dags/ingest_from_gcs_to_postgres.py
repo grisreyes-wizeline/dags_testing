@@ -84,7 +84,7 @@ with DAG(
                 SUPPLIER TEXT,
                 ITEM_CODE TEXT,
                 ITEM_DESCRIPTION TEXT,
-                ITEM TYPE TXT,
+                ITEM TYPE TEXT,
                 RETAIL_SALES NUMERIC,
                 RETAIL_TRANSFERS NUMERIC,
                 WAREHOUSE_SALES NUMERIC,
