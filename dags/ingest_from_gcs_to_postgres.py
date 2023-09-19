@@ -79,8 +79,8 @@ with DAG(
         postgres_conn_id=POSTGRES_CONN_ID,
         sql=f"""
             CREATE TABLE IF NOT EXISTS {POSTGRES_TABLE_NAME} (
-                YEAR INTEGER,
-                MONTH INTEGER,
+                YEAR NUMERIC,
+                MONTH NUMERIC,
                 SUPPLIER TEXT,
                 ITEM_CODE TEXT,
                 ITEM_DESCRIPTION TEXT,
