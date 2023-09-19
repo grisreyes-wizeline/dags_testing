@@ -13,7 +13,7 @@ def upload_to_gcs():
     local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
     localToGCS1 = FileToGoogleCloudStorageOperator(
         task_id='LocalToGCS',
-        src= local_file_path
+        src= local_file_path,
         dst='warehouse_and_retail_sales_2.csv',
         bucket= bucket_name,
         google_cloud_storage_conn_id='google_cloud_storage',
