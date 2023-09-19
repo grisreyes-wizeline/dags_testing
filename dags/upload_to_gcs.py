@@ -1,32 +1,37 @@
-from datetime import timedelta, datetime
+from datetime import datetime
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from airflow.operators.dummy_operator import DummyOperator
-from airflow.contrib.operators.file_to_gcs import FileToGoogleCloudStorageOperator
+from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
+from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
+import os
 
-seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
-                                  datetime.min.time())
-
-default_args = {
-    'owner': 'Ilham Putra',
-    'depends_on_past': False,
-    'email_on_failure': False,
-    'email_on_retry': False,
-    'retries': 5,
-    'start_date':  seven_days_ago,
-    'retry_delay': timedelta(minutes=5),
-}
-
-with DAG('UploafToGCS', schedule_interval='@once', default_args=default_args) as dag:
-    
-    t1 = DummyOperator(task_id='op1', dag=dag)
-    t2 = FileToGoogleCloudStorageOperator(
-        task_id='fileToGCS',
-        src='/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv',
-        dst='data/warehouse_and_retail_sales_bucket.csv',
-        bucket='africa-deb-bucket',
-        google_cloud_storage_conn_id='google_cloud_storage',
-        dag=dag
+# Define the Python function to upload files to GCS
+def upload_to_gcs(data_folder, gcs_path,**kwargs):
+    bucket_name = 'africa-deb-bucket'  # Your GCS bucket name
+    gcs_conn_id = 'google_cloud_storage'
+    local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
+    upload_task = LocalFilesystemToGCSOperator(
+        task_id=f'upload_to_gcs',
+        src=local_file_path,
+        dst='data/warehouse_and_retail_sales.csv',
+        bucket=bucket_name,
+        gcp_conn_id=gcs_conn_id,
         )
-        
-    t1 >> t2
+        upload_task.execute(context=kwargs)
+
+# Define your DAG
+dag = DAG(
+    'upload_files_to_gcs',
+    start_date=datetime(2023, 1, 1),
+    schedule_interval=None,  # Set your desired schedule interval or None for manual triggering
+    catchup=False,  # Set to True if you want historical DAG runs upon creation
+)
+upload_to_gcs = PythonOperator(
+    task_id='upload_to_gcs',
+    python_callable=upload_to_gcs,
+    provide_context=True,
+    dag=dag,  # Assign the DAG to the task
+)
+
+# Define your DAG dependencies
+upload_to_gcs
