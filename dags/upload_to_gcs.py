@@ -17,7 +17,7 @@ def upload_to_gcs():
         bucket=bucket_name,
         gcp_conn_id=gcs_conn_id,
         )
-    upload_task.execute(context=kwargs)
+    upload_task.execute()
 
 # Define your DAG
 dag = DAG(
