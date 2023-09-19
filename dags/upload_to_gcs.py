@@ -13,7 +13,7 @@ def upload_to_gcs():
     upload_task = LocalFilesystemToGCSOperator(
         task_id=f'upload_to_gcs',
         src=local_file_path,
-        dst='data/warehouse_and_retail_sales.csv',
+        dst='warehouse_and_retail_sales.csv',
         bucket=bucket_name,
         gcp_conn_id=gcs_conn_id,
         )
