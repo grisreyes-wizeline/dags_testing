@@ -8,12 +8,12 @@ seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
                                   datetime.min.time())
 
 default_args = {
-    'owner': 'Grisell Reyes Rios',
+    'owner': 'Ilham Putra',
     'depends_on_past': False,
     'email_on_failure': False,
     'email_on_retry': False,
-    'start_date': seven_days_ago,
     'retries': 5,
+    'start_date':  seven_days_ago,
     'retry_delay': timedelta(minutes=5),
 }
 
@@ -28,4 +28,5 @@ with DAG('UploafToGCS', schedule_interval='@once', default_args=default_args) as
         google_cloud_storage_conn_id='google_cloud_storage',
         dag=dag
         )
-t1 >> t2
+        
+    t1 >> t2
