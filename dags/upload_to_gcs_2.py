@@ -5,6 +5,8 @@ from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.contrib.operators.file_to_gcs import FileToGoogleCloudStorageOperator
 import os
+from datetime import timedelta
+from datetime import datetime
 
 # Define the Python function to upload files to GCS
 def upload_to_gcs():
