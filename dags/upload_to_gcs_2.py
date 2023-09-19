@@ -21,20 +21,17 @@ def upload_to_gcs():
         )
     
 # Define your DAG
-dag = DAG('insert_data_into_bucket',
-          default_args=default_args,
-          schedule_interval='@once',
-          catchup=False)
-
-start_pipeline = DummyOperator(
+with DAG('RecipeWarehouse', schedule_interval='@once', default_args=default_args) as dag:
+    start_pipeline = DummyOperator(
         task_id = 'start_pipeline',
         dag = dag
         )
-upload_to_gcs = PythonOperator(
-    task_id='upload_to_gcs',
-    python_callable=upload_to_gcs,
-    dag=dag  # Assign the DAG to the task
-)
+        
+    upload_to_gcs = PythonOperator(
+        task_id='upload_to_gcs',
+        python_callable=upload_to_gcs,
+        dag=dag  # Assign the DAG to the task
+        )
 
 # Define your DAG dependencies
 start_pipeline >> upload_to_gcs
