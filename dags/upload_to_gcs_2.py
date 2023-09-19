@@ -35,7 +35,7 @@ start_pipeline = DummyOperator(
 upload_to_gcs = PythonOperator(
     task_id='upload_to_gcs',
     python_callable=upload_to_gcs,
-    dag=dag,  # Assign the DAG to the task
+    dag=dag  # Assign the DAG to the task
 )
 
 # Define your DAG dependencies
