@@ -29,7 +29,6 @@ dag = DAG(
 upload_to_gcs = PythonOperator(
     task_id='upload_to_gcs',
     python_callable=upload_to_gcs,
-    provide_context=false,
     dag=dag,  # Assign the DAG to the task
 )
 
