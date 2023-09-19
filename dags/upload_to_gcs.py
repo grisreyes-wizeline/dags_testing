@@ -2,7 +2,7 @@ from datetime import timedelta, datetime
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
-from airflow.contrib.operators.file_to_gcs import FileToGoogleCloudStorageOperator}
+from airflow.contrib.operators.file_to_gcs import FileToGoogleCloudStorageOperator
 
 seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
                                   datetime.min.time())
