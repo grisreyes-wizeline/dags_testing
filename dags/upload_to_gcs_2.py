@@ -6,7 +6,7 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesyste
 
 # [START howto_gcs_environment_variables]
 BUCKET_NAME = 'africa-deb-bucket'
-PATH_TO_UPLOAD_FILE = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
+PATH_TO_UPLOAD_FILE = "/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv"
 DESTINATION_FILE_LOCATION = 'warehouse_and_retail_sales_2.csv'
 # [END howto_gcs_environment_variables]
 
