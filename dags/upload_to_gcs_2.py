@@ -26,7 +26,7 @@ dag = DAG(
     start_date=datetime(2023, 1, 1),
     schedule_interval=None,  # Set your desired schedule interval or None for manual triggering
     catchup=False,  # Set to True if you want historical DAG runs upon creation
-) as dag
+) as dag:
 
 start_pipeline = DummyOperator(
         task_id = 'start_pipeline',
