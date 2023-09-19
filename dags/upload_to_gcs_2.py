@@ -14,7 +14,7 @@ def upload_to_gcs():
     localToGCS1 = FileToGoogleCloudStorageOperator(
         task_id='LocalToGCS',
         src= local_file_path
-        dst='warehouse_and_retail_sales.csv',
+        dst='warehouse_and_retail_sales_2.csv',
         bucket= bucket_name,
         google_cloud_storage_conn_id='google_cloud_storage',
         dag=dag
