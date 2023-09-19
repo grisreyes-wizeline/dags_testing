@@ -13,6 +13,18 @@ bucket_name = 'africa-deb-bucket'  # Your GCS bucket name
 gcs_conn_id = 'google_cloud_storage'
 local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
 
+def upload_to_gcs():
+    bucket_name = bucket_name,  # Your GCS bucket name
+    gcs_conn_id = 'google_cloud_storage'
+    local_file_path = local_file_path
+    upload_task = LocalFilesystemToGCSOperator(
+        task_id=f'upload_to_gcs',
+        src=local_file_path,
+        dst='warehouse_and_retail_sales.csv',
+        bucket=bucket_name,
+        gcp_conn_id=gcs_conn_id,
+        )
+
 default_args = {
     'owner': 'grisell.reyes',
     'depends_on_past': False,    
@@ -30,14 +42,9 @@ with DAG('uplod_to_gcs_2', schedule_interval='@once', default_args=default_args)
         dag = dag
         )
         
-    local_to_gcs = FileToGoogleCloudStorageOperator(
-        task_id='LocalToGCS',
-        src= local_file_path,
-        dst='warehouse_and_retail_sales_2.csv',
-        bucket= bucket_name,
-        google_cloud_storage_conn_id='google_cloud_storage',
-        dag=dag
-        )
-
-# Define your DAG dependencies
-start_pipeline >> local_to_gcs
+    upload_data = PythonOperator(
+        task_id="upload_data",
+        python_callable=upload_to_gcs,
+    )
+    
+    start_pipeline >> upload_data
