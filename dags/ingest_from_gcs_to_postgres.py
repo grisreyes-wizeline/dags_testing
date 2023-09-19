@@ -28,7 +28,7 @@ GCS_KEY_NAME = "chart-data.csv"
 
 # Postgres constants
 POSTGRES_CONN_ID = "postgres_conn"
-POSTGRES_TABLE_NAME = "chart-data"
+POSTGRES_TABLE_NAME = "chart_data"
 
 
 def ingest_data_from_gcs(
