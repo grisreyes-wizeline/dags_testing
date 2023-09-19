@@ -29,7 +29,7 @@ t2 = FileToGoogleCloudStorageOperator(
     task_id='fileToGCS',
     src='/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv',
     dst='warehouse_and_retail_sales',
-    bucket='africa-deb-bucket',
+    bucket='africa-deb-bucket/data',
     google_cloud_storage_conn_id='google_cloud_default',
     dag=dag
 )
