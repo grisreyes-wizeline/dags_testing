@@ -19,7 +19,17 @@ def upload_to_gcs():
         google_cloud_storage_conn_id='google_cloud_storage',
         dag=dag
         )
-    
+
+default_args = {
+    'owner': 'grisell.reyes',
+    'depends_on_past': False,    
+    'start_date': datetime(2023, 1, 1),
+    'email': ['grisell.reyes@wizeline.com'],
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'retries': 2,
+    'retry_delay': timedelta(minutes=1),
+}
 # Define your DAG
 with DAG('RecipeWarehouse', schedule_interval='@once', default_args=default_args) as dag:
     start_pipeline = DummyOperator(
