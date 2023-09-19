@@ -35,7 +35,7 @@ with DAG('uplod_to_gcs_2', schedule_interval='@once', default_args=default_args)
         src= local_file_path,
         dst='warehouse_and_retail_sales_2.csv',
         bucket= bucket_name,
-        google_cloud_storage_conn_id='gcs_conn_id',
+        google_cloud_storage_conn_id='google_cloud_storage',
         dag=dag
         )
 
