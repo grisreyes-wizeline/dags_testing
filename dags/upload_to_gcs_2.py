@@ -9,10 +9,13 @@ import os
 from datetime import timedelta
 from datetime import datetime
 
+# GCP constants
+GCP_CONN_ID = "google_cloud_storage"
+GCS_BUCKET_NAME = "africa-deb-bucket"
+local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
+
+
 def upload_to_gcs():
-    bucket_name = 'africa-deb-bucket'  
-    gcs_conn_id = 'google_cloud_storage'
-    local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
     upload_task = LocalFilesystemToGCSOperator(
         task_id=f'upload_to_gcs',
         src=local_file_path,
