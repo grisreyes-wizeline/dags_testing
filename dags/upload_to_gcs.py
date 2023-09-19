@@ -19,7 +19,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-dag = DAG('warehouse-retail-sales-dag', default_args=default_args, schedule_interval='@daily')
+dag = DAG('upload_to_gcs', default_args=default_args, schedule_interval='@daily')
 
 
 t1 = DummyOperator(task_id='op1', dag=dag)
