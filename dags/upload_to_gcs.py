@@ -7,7 +7,7 @@ import os
 
 # Define the Python function to upload files to GCS
 def upload_to_gcs(data_folder, gcs_path,**kwargs):
-    data_folder = "./local_repository_file/"
+    data_folder = "session_06/resources/local_repository_file/"
     bucket_name = 'africa-deb-bucket'  # Your GCS bucket name
     gcs_conn_id = 'gcs_conn'
     # List all CSV files in the data folder
