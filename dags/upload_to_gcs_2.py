@@ -21,12 +21,10 @@ def upload_to_gcs():
         )
     
 # Define your DAG
-dag = DAG(
-    'upload_files_to_gcs',
-    start_date=datetime(2023, 1, 1),
-    schedule_interval=None,  # Set your desired schedule interval or None for manual triggering
-    catchup=False,  # Set to True if you want historical DAG runs upon creation
-) as dag:
+dag = DAG('insert_data_into_bucket',
+          default_args=default_args,
+          schedule_interval='@once',
+          catchup=False)
 
 start_pipeline = DummyOperator(
         task_id = 'start_pipeline',
