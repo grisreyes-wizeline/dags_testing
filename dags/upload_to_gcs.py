@@ -6,7 +6,7 @@ from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesyste
 import os
 
 # Define the Python function to upload files to GCS
-def upload_to_gcs(data_folder, gcs_path,**kwargs):
+def upload_to_gcs(local_file_path, bucket_name,**kwargs):
     bucket_name = 'africa-deb-bucket'  # Your GCS bucket name
     gcs_conn_id = 'google_cloud_storage'
     local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
