@@ -24,11 +24,11 @@ CLOUD_PROVIDER = "gcp"
 # GCP constants
 GCP_CONN_ID = "google_cloud_storage"
 GCS_BUCKET_NAME = "africa-deb-bucket"
-GCS_KEY_NAME = "warehouse_and_retail_sales.csv"
+GCS_KEY_NAME = "chart-data.csv"
 
 # Postgres constants
 POSTGRES_CONN_ID = "postgres_conn"
-POSTGRES_TABLE_NAME = "warehouse_and_retail_sales"
+POSTGRES_TABLE_NAME = "chart-data"
 
 
 def ingest_data_from_gcs(
@@ -79,12 +79,17 @@ with DAG(
         postgres_conn_id=POSTGRES_CONN_ID,
         sql=f"""
             CREATE TABLE IF NOT EXISTS {POSTGRES_TABLE_NAME} (
-                SUPPLIER TEXT,
-                ITEM_DESCRIPTION TEXT,
-                ITEM_TYPE TEXT,
-                RETAIL_SALES TEXT,
-                RETAIL_TRANSFERS TEXT,
-                WAREHOUSE_SALES TEXT
+                month VARCHAR(10),
+                position INTEGER,
+                artist VARCHAR(100),
+                song VARCHAR(100),
+                indicative_revenue NUMERIC,
+                us INTEGER,
+                uk INTEGER,
+                de INTEGER,
+                fr INTEGER,
+                ca INTEGER,
+                au INTEGER
             )
         """,
     )
