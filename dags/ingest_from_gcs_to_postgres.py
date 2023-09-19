@@ -87,7 +87,7 @@ with DAG(
                 ITEM_TYPE TEXT,
                 RETAIL_SALES NUMERIC,
                 RETAIL_TRANSFERS NUMERIC,
-                WAREHOUSE_SALES NUMERIC,
+                WAREHOUSE_SALES NUMERIC
             )
         """,
     )
