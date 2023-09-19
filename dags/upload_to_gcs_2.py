@@ -27,6 +27,11 @@ dag = DAG(
     schedule_interval=None,  # Set your desired schedule interval or None for manual triggering
     catchup=False,  # Set to True if you want historical DAG runs upon creation
 )
+
+start_pipeline = DummyOperator(
+        task_id = 'start_pipeline',
+        dag = dag
+        )
 upload_to_gcs = PythonOperator(
     task_id='upload_to_gcs',
     python_callable=upload_to_gcs,
@@ -34,4 +39,4 @@ upload_to_gcs = PythonOperator(
 )
 
 # Define your DAG dependencies
-upload_to_gcs
+start_pipeline >> upload_to_gcs
