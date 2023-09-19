@@ -4,22 +4,17 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.contrib.operators.file_to_gcs import FileToGoogleCloudStorageOperator
 
-
-seven_days_ago = datetime.combine(datetime.today() - timedelta(1),
-                                  datetime.min.time())
-
 default_args = {
-    'owner': 'airflow',
+    'owner': 'Ilham Putra',
     'depends_on_past': False,
-    'start_date': seven_days_ago,
-    'email': ['grisell.reyes@wizeline.com'],
-    'email_on_failure': True,
+    'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 2,
+    'retries': 5,
+    'start_date':  days_ago(2),
     'retry_delay': timedelta(minutes=5),
 }
 
-dag = DAG('upload_to_gcs', default_args=default_args, schedule_interval='@daily')
+with DAG('UploafToGCS', schedule_interval='@once', default_args=default_args) as dag:
 
 
 t1 = DummyOperator(task_id='op1', dag=dag)
