@@ -10,7 +10,6 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 5,
-    'start_date':  days_ago(2),
     'retry_delay': timedelta(minutes=5),
 }
 
