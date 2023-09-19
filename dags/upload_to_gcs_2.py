@@ -16,13 +16,13 @@ local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/l
 
 
 def upload_to_gcs():
-    upload_task = LocalFilesystemToGCSOperator(
-        task_id=f'upload_to_gcs',
+    upload_file = LocalFilesystemToGCSOperator(
+        task_id="upload_file",
         src=local_file_path,
-        dst='warehouse_and_retail_sales.csv',
-        bucket=bucket_name,
-        gcp_conn_id=gcs_conn_id,
-        )
+        dst='warehouse_and_retail_sales_2.csv,
+        bucket=GCS_BUCKET_NAME,
+        gcp_conn_id = GCP_CONN_ID)
+
 
 default_args = {
     'owner': 'grisell.reyes',
