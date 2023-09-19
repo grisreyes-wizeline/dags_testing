@@ -39,8 +39,9 @@ with DAG('uplod_to_gcs_2', schedule_interval='@once', default_args=default_args)
         )
         
     upload_data = PythonOperator(
-        task_id="upload_data",
+        task_id="upload_to_gcs",
         python_callable=upload_to_gcs,
     )
     
-    start_pipeline >> upload_data
+    start_pipeline >> upload_to_gcs
+    
