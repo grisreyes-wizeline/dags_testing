@@ -28,7 +28,7 @@ t1 = DummyOperator(task_id='op1', dag=dag)
 t2 = FileToGoogleCloudStorageOperator(
     task_id='fileToGCS',
     src='/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv',
-    dst='data/warehouse_and_retail_sales.csv',
+    dst='data',
     bucket='africa-deb-bucket',
     google_cloud_storage_conn_id='google_cloud_default',
     dag=dag
