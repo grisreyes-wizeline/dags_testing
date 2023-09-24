@@ -66,3 +66,6 @@ with DAG(
             "local_file": f"{path_to_local_home}/{dataset_file}",
         },
     )
+
+    # Workflow for task direction
+    download_dataset_task >> local_to_gcs_task
