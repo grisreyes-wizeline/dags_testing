@@ -12,7 +12,7 @@ import pyarrow.csv as pv
 
 # constants
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
-BUCKET = os.environ.get('BUCKET')
+BUCKET = 'africa-deb-bucket-second'
 GCS_CONN_ID = 'gcp_conn'
 dataset_url=f"https://data.montgomerycountymd.gov/resource/v76h-r7br"
 dataset_file= 'warehouse_and_details_sales.csv'
