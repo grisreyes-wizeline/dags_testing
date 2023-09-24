@@ -1,35 +1,68 @@
+import os
+import logging
 from datetime import datetime
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
+from airflow.utils.dates import days_ago
+from airflow.operators.python import PythonOperator
+from google.cloud import storage
 from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
-import os
+from airflow.operators.bash_operator import BashOperator
+import pyarrow.csv as pv
 
-# Define the Python function to upload files to GCS
-def upload_to_gcs():
-    bucket_name = 'africa-deb-bucket'  # Your GCS bucket name
-    gcs_conn_id = 'google_cloud_storage'
-    local_file_path = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
-    upload_task = LocalFilesystemToGCSOperator(
-        task_id=f'upload_to_gcs',
-        src=local_file_path,
-        dst='warehouse_and_retail_sales.csv',
-        bucket=bucket_name,
-        gcp_conn_id=gcs_conn_id,
-        )
+# constants
+PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
+BUCKET = os.environ.get('GCP_GCS_BUCKET')
+GCS_CONN_ID = 'gcp_conn'
+dataset_url=f"https://data.montgomerycountymd.gov/resource/v76h-r7br"
+dataset_file= 'warehouse_and_details_sales.csv'
+path_to_local_home = "/opt/airflow/"
+#LOCAL_FILE_PATH = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
+
+def upload_to_gcs(bucket, object_name, local_file):
+    """
+    Ref: https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
+    """
+    # WORKAROUND to prevent timeout for files > 6 MB on 800 kbps upload speed.
+    # (Ref: https://github.com/googleapis/python-storage/issues/74)
+    storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
+    storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
+    # End of Workaround
+    client = storage.Client()
+    bucket = client.bucket(bucket)
+    blob = bucket.blob(object_name)
+    blob.upload_from_filename(local_file)
+    print(
+        f"File {local_file} uploaded to {bucket}."
+    )
+
+default_args = {
+    "owner": "airflow",
+    "start_date": days_ago(1),
+    "depends_on_past": False,
+    "retries": 1,
+}
+
+with DAG(
+    dag_id="data_ingestion_gcs_dag",
+    schedule_interval="@daily", # https://airflow.apache.org/docs/apache-airflow/1.10.1/scheduler.html
+    default_args=default_args,
+    catchup=False,
+    max_active_runs=1,
+    tags=['upload-gcs'],
+) as dag:
+
+    download_dataset_task = BashOperator(
+        task_id="download_dataset_task",
+        bash_command=f"curl -sS {dataset_url} > {path_to_local_home}/{dataset_file}"
+    )
+
     
-# Define your DAG
-dag = DAG(
-    'upload_files_to_gcs',
-    start_date=datetime(2023, 1, 1),
-    schedule_interval=None,  # Set your desired schedule interval or None for manual triggering
-    catchup=False,  # Set to True if you want historical DAG runs upon creation
-)
-upload_to_gcs = PythonOperator(
-    task_id='upload_to_gcs',
-    python_callable=upload_to_gcs,
-    dag=dag,  # Assign the DAG to the task
-)
-
-# Define your DAG dependencies
-upload_to_gcs
+    local_to_gcs_task = PythonOperator(
+        task_id="local_to_gcs_task",
+        python_callable=upload_to_gcs,
+        op_kwargs={
+            "bucket": BUCKET,
+            "object_name": f"raw/{dataset_file}",
+            "local_file": f"{path_to_local_home}/{dataset_file}",
+        },
+    )
