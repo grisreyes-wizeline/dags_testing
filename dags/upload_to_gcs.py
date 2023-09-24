@@ -14,7 +14,7 @@ import pyarrow.csv as pv
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 BUCKET = 'africa-deb-bucket-second'
 GCS_CONN_ID = 'gcp_conn'
-dataset_url=f"https://data.montgomerycountymd.gov/resource/v76h-r7br"
+dataset_url=f"https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
 dataset_file= 'warehouse_and_details_sales.csv'
 path_to_local_home = "/opt/airflow/"
 #LOCAL_FILE_PATH = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
