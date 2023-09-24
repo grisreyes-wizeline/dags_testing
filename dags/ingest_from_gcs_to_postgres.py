@@ -15,6 +15,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
 from airflow.utils.trigger_rule import TriggerRule
+import os
 
 # General constants
 DAG_ID = "ingestion_workflow_gcp_to_postgres"
@@ -22,12 +23,12 @@ STABILITY_STATE = "unstable"
 CLOUD_PROVIDER = "gcp"
 
 # GCP constants
-GCP_CONN_ID = "google_cloud_storage"
-GCS_BUCKET_NAME = "africa-deb-bucket"
+GCP_CONN_ID = "gcp_conn"
+GCS_BUCKET_NAME = "africa-deb-bucket-second"
 GCS_KEY_NAME = "chart-data.csv"
 
 # Postgres constants
-POSTGRES_CONN_ID = "postgres_conn"
+POSTGRES_CONN_ID = "google-demo-session-6-conn"
 POSTGRES_TABLE_NAME = "chart_data"
 
 
