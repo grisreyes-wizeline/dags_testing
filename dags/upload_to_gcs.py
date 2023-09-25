@@ -27,10 +27,10 @@ def download_samples_from_url(path: str) -> None:
     Args:
         path (str): Path to output file.
     """
-    for x,y in zip(dataset_url, dataset_file):
+    for x in range(len(dataset_url),len(dataset_file)):
         response = requests.get(dataset_url[x])
-        with open(dataset_file[y], mode="wb") as file[y]:
-            file[y].write(response[x].content)
+        with open(dataset_file[x], mode="wb") as file[x]:
+            file[x].write(response[x].content)
 
 def upload_file_func():
     hook = GCSHook(gcp_conn_id='google_cloud_default')
