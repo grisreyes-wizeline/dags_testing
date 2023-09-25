@@ -64,7 +64,7 @@ with DAG(
         task_id="local_to_gcs_task",
         python_callable=upload_to_gcs,
         op_kwargs={
-            "bucket": BUCKET,
+            "bucket": bucket,
             "object_name": f"{dataset_file}",
             "local_file": f"{path_to_local_home}/{dataset_file}",
         },
