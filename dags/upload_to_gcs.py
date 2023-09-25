@@ -17,7 +17,7 @@ bucket = 'africa-deb-bucket-second'
 dataset_url_1 = (
     "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv")
 dataset_url_2 = (
-    "https://raw.githubusercontent.com/enroliv/adios/main/data/chart-data.csv")
+    "https://chart2000.com/data/chart2000-songmonth-0-3-0067.csv")
 dataset_file_1= "warehouse_and_details_sales.csv"
 dataset_file_2="chart_data.csv"
 # path_to_local_home = "/opt/airflow"
