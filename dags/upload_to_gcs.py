@@ -34,7 +34,7 @@ def download_samples_from_url(path: str) -> None:
 def upload_file_func():
     with tempfile.NamedTemporaryFile("wb+") as tmp:
         download_samples_from_url(tmp.name)
-        hook = GoogleCloudStorageHook(google_cloud_storage_conn_id='google_cloud_default').get_conn()
+        hook = GoogleCloudStorageHook()
         source_bucket = bucket
         source_object = dataset_file
         hook.upload(source_bucket, source_object, tmp)
