@@ -14,7 +14,6 @@ import tempfile
 
 # constants
 bucket = 'africa-deb-bucket-second'
-google_cloud_default = 'gcp_conn'
 dataset_url = (
     "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
 )
@@ -35,7 +34,7 @@ def download_samples_from_url(path: str) -> None:
 def upload_file_func():
     with tempfile.NamedTemporaryFile("wb+") as tmp:
         download_samples_from_url(tmp.name)
-        hook = GoogleCloudStorageHook()
+        hook = GoogleCloudStorageHook(google_cloud_storage_conn_id='gcp_conn').get_conn()
         source_bucket = bucket
         source_object = dataset_file
         hook.upload(source_bucket, source_object, tmp)
