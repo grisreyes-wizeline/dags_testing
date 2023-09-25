@@ -12,13 +12,18 @@ import pyarrow.csv as pv
 
 # constants
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
-BUCKET = 'africa-deb-bucket-second'
-GCS_CONN_ID = 'gcp_conn'
+bucket = 'africa-deb-bucket-second'
+gcs_conn_id = 'gcp_conn'
 dataset_url=f"https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
 dataset_file= "warehouse_and_details_sales.csv"
 path_to_local_home = "/opt/airflow/"
-GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 #LOCAL_FILE_PATH = '/Users/grisell.reyes/Google-Africa-DEB/session_06/resources/local_repository_file/warehouse_and_retail_sales.csv'
+
+def file_path(relative_path):
+    dir = os.path.dirname(os.path.abspath(__file__))
+    split_path = relative_path.split("/")
+    new_path = os.path.join(dir, *split_path)
+    return new_path
 
 def upload_to_gcs(bucket, object_name, local_file):
     """
@@ -29,14 +34,16 @@ def upload_to_gcs(bucket, object_name, local_file):
     #storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
     #storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
     # End of Workaround
-    client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
-    client = storage.Client()
-    bucket = client.bucket(bucket)
-    blob = bucket.blob(object_name)
-    blob.upload_from_filename(local_file)
-    print(
-        f"File {local_file} uploaded to {bucket}."
-    )
+    with open(file_path("service_account.json"), "r") as google_application_credentials:
+        next(google_application_credentials)
+        client = storage.Client.from_service_account_json(google_application_credentials)
+        client = storage.Client()
+        bucket = client.bucket(bucket)
+        blob = bucket.blob(object_name)
+        blob.upload_from_filename(local_file)
+        print(
+            f"File {local_file} uploaded to {bucket}."
+        )
 
 default_args = {
     "owner": "airflow",
