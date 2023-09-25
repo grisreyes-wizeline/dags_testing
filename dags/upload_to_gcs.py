@@ -14,10 +14,10 @@ import tempfile
 
 # constants
 bucket = 'africa-deb-bucket-second'
-dataset_url = (
-    "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
-)
-dataset_file= "warehouse_and_details_sales.csv"
+dataset_url = [
+    "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv",
+    "https://chart2000.com/data/chart2000-album-2000-decade-0-3-0067.csv"]
+dataset_file= ["warehouse_and_details_sales.csv", "chart-data.csv"]
 # path_to_local_home = "/opt/airflow"
 #credentials_file = Path("service_account.json")
 
@@ -27,17 +27,19 @@ def download_samples_from_url(path: str) -> None:
     Args:
         path (str): Path to output file.
     """
-    response = requests.get(dataset_url)
-    with open(dataset_file, mode="wb") as file:
-        file.write(response.content)
+    for x in dataset_url, dataset_file:
+        response = requests.get(dataset_url)
+        with open(dataset_file[x], mode="wb") as file:
+            file.write(response.content)
 
 def upload_file_func():
     hook = GCSHook(gcp_conn_id='google_cloud_default')
     bucket_name = bucket
-    object_name = dataset_file
-    filename = Path(dataset_file)
-    hook.upload(bucket_name, object_name, filename)
-
+    for gcs_file in dataset_file:
+        object_name = gcs_file
+        filename = Path(gcs_file)
+        hook.upload(bucket_name, object_name, filename)
+        
 default_args = {
     "owner": "airflow",
     "start_date": days_ago(1),
