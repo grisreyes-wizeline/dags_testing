@@ -16,7 +16,7 @@ import tempfile
 bucket = 'africa-deb-bucket-second'
 dataset_url = [
     "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv",
-    "https://chart2000.com/data/chart2000-album-2000-decade-0-3-0067.csv"]
+    "https://raw.githubusercontent.com/enroliv/adios/main/data/chart-data.csv"]
 dataset_file= ["warehouse_and_details_sales.csv", "chart-data.csv"]
 # path_to_local_home = "/opt/airflow"
 #credentials_file = Path("service_account.json")
@@ -27,10 +27,10 @@ def download_samples_from_url(path: str) -> None:
     Args:
         path (str): Path to output file.
     """
-    for x in dataset_url, dataset_file:
-        response = requests.get(dataset_url)
-        with open(dataset_file[x], mode="wb") as file:
-            file.write(response.content)
+    for x,y in zip(dataset_url, dataset_file):
+        response = requests.get(dataset_url[x])
+        with open(dataset_file[y], mode="wb") as file[y]:
+            file[y].write(response[x].content)
 
 def upload_file_func():
     hook = GCSHook(gcp_conn_id='google_cloud_default')
