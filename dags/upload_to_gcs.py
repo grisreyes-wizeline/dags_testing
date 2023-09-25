@@ -5,6 +5,7 @@ from airflow import DAG
 from airflow.decorators import dag
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from google.cloud import storage
 import pyarrow.csv as pv
 from pathlib import Path
@@ -12,7 +13,6 @@ import requests
 import tempfile
 
 # constants
-PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 bucket = 'africa-deb-bucket-second'
 gcs_conn_id = 'gcp_conn'
 dataset_url = (
@@ -20,7 +20,7 @@ dataset_url = (
 )
 dataset_file= "warehouse_and_details_sales.csv"
 path_to_local_home = "/opt/airflow"
-credentials_file = Path("service_account.json")
+#credentials_file = Path("service_account.json")
 
 def download_samples_from_url(path: str) -> None:
     """Downloads a set of samples into the specified path.
@@ -34,6 +34,8 @@ def download_samples_from_url(path: str) -> None:
 
 def upload_to_gcs(bucket_name, destination_blob_name, credentials_file):
     # Initialize the Google Cloud Storage client with the credentials
+    gcs_hook = GCSHook(gcp_conn_id='gcp_conn')
+    credentials_file = GCSHook(gcp_conn_id='gcp_conn').get_conn()
     storage_client = storage.Client.from_service_account_json(credentials_file)
     with tempfile.NamedTemporaryFile("wb+") as tmp:
         download_samples_from_url(tmp.name)
@@ -67,7 +69,6 @@ with DAG(
         op_kwargs={
             "bucket_name": bucket,
             "destination_blob_name": dataset_file,
-            "credentials_file": credentials_file,
         },
     )
 
