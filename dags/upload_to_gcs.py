@@ -18,7 +18,7 @@ dataset_url = (
     "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
 )
 dataset_file= "warehouse_and_details_sales.csv"
-path_to_local_home = "/opt/airflow"
+# path_to_local_home = "/opt/airflow"
 #credentials_file = Path("service_account.json")
 
 def download_samples_from_url(path: str) -> None:
@@ -30,15 +30,6 @@ def download_samples_from_url(path: str) -> None:
     with open(path, "wb") as out:
         response = requests.get(dataset_url)
         out.write(response.content)
-
-def upload_file_func():
-    with tempfile.NamedTemporaryFile("wb+") as tmp:
-        download_samples_from_url(tmp.name)
-        hook = GCSHook()
-        source_bucket = bucket
-        source_object = dataset_file
-        hook.upload(source_bucket, source_object, tmp)
-
 
 default_args = {
     "owner": "airflow",
@@ -55,11 +46,20 @@ with DAG(
     max_active_runs=1,
     tags=['upload-gcs']
 ) as dag:
-   
-    
+
+    def upload_file_func():
+        with tempfile.NamedTemporaryFile("wb+") as tmp:
+            download_samples_from_url(tmp.name)
+            hook = GCSHook(gcp_conn_id='google_cloud_default')
+            bucket_name = bucket
+            object_name = dataset_file
+            filename = tmp
+            hook.upload(bucket_name, object_name, filename)
+            
     upload_file = PythonOperator(task_id='upload_file', python_callable=upload_file_func)
 
     # Workflow for task direction
     upload_file
+
 
 
