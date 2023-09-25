@@ -14,7 +14,7 @@ import tempfile
 
 # constants
 bucket = 'africa-deb-bucket-second'
-gcs_conn_id = 'gcp_conn'
+google_cloud_default = 'gcp_conn'
 dataset_url = (
     "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
 )
