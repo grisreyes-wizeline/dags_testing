@@ -6,37 +6,43 @@ from airflow.decorators import dag
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
 from google.cloud import storage
-from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
-from airflow.operators.bash_operator import BashOperator
 import pyarrow.csv as pv
+from pathlib import Path
+import requests
+import tempfile
 
 # constants
 PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 bucket = 'africa-deb-bucket-second'
 gcs_conn_id = 'gcp_conn'
-dataset_url=f"https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
+dataset_url = (
+    "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv"
+)
 dataset_file= "warehouse_and_details_sales.csv"
 path_to_local_home = "/opt/airflow"
-google_application_credentials = "/Users/grisell.reyes/Google-Africa-DEB/session_06/exercises/airflow-gke/dags/service_account.json"
+credentials_file = Path("service_account.json")
 
+def download_samples_from_url(path: str) -> None:
+    """Downloads a set of samples into the specified path.
 
-def upload_to_gcs(bucket, object_name, local_file):
+    Args:
+        path (str): Path to output file.
     """
-    Ref: https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
-    """
-    # WORKAROUND to prevent timeout for files > 6 MB on 800 kbps upload speed.
-    # (Ref: https://github.com/googleapis/python-storage/issues/74)
-    #storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
-    #storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
-    # End of Workaround
-    client = storage.Client.from_service_account_json(google_application_credentials)
-    client = storage.Client()
-    bucket = client.bucket(bucket)
-    blob = bucket.blob(object_name)
-    blob.upload_from_filename(local_file)
-    print(
-        f"File {local_file} uploaded to {bucket}."
-    )
+    with open(path, "wb") as out:
+        response = requests.get(dataset_url)
+        out.write(response.content)
+
+def upload_to_gcs(bucket_name, destination_blob_name, credentials_file):
+    # Initialize the Google Cloud Storage client with the credentials
+    storage_client = storage.Client.from_service_account_json(credentials_file)
+    with tempfile.NamedTemporaryFile("wb+") as tmp:
+        download_samples_from_url(tmp.name)
+        # Get the target bucket
+        bucket = storage_client.bucket(bucket_name)
+        # Upload the file to the bucket
+        blob = bucket.blob(destination_blob_name)
+        source_file_path= blob.upload_from_filename(tmp.name)
+        print(f"File {source_file_path} uploaded to gs://{bucket_name}/{destination_blob_name}")
 
 default_args = {
     "owner": "airflow",
@@ -54,19 +60,19 @@ with DAG(
     tags=['upload-gcs']
 ) as dag:
 
-    download_dataset_task = BashOperator(
-        task_id="download_dataset_task",
-        bash_command=f"curl -sS {dataset_url} > {path_to_local_home}/{dataset_file}"
+    download_dataset_task = PythonOperator(
+        task_id="download_dataset",
+        python_callable="download_samples_from_url",
     )
 
     
     local_to_gcs_task = PythonOperator(
-        task_id="local_to_gcs_task",
+        task_id="upload_to_gcs_task",
         python_callable=upload_to_gcs,
         op_kwargs={
-            "bucket": bucket,
-            "object_name": f"{dataset_file}",
-            "local_file": f"{path_to_local_home}/{dataset_file}",
+            "bucket_name": bucket,
+            "destination_blob_name": dataset_file,
+            "credentials_file": credentials_file,
         },
     )
 
