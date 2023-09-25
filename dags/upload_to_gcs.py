@@ -31,6 +31,15 @@ def download_samples_from_url(path: str) -> None:
         response = requests.get(dataset_url)
         out.write(response.content)
 
+def upload_file_func():
+     with tempfile.NamedTemporaryFile("wb+") as tmp:
+        download_samples_from_url(tmp.name)
+        hook = GCSHook(gcp_conn_id='google_cloud_default')
+        bucket_name = bucket
+        object_name = dataset_file
+        filename = tmp
+        hook.upload(bucket_name, object_name, filename)
+
 default_args = {
     "owner": "airflow",
     "start_date": days_ago(1),
@@ -46,20 +55,12 @@ with DAG(
     max_active_runs=1,
     tags=['upload-gcs']
 ) as dag:
-
-    def upload_file_func():
-        with tempfile.NamedTemporaryFile("wb+") as tmp:
-            download_samples_from_url(tmp.name)
-            hook = GCSHook(gcp_conn_id='google_cloud_default')
-            bucket_name = bucket
-            object_name = dataset_file
-            filename = tmp
-            hook.upload(bucket_name, object_name, filename)
-            
+    
     upload_file = PythonOperator(task_id='upload_file', python_callable=upload_file_func)
 
     # Workflow for task direction
     upload_file
+
 
 
 
