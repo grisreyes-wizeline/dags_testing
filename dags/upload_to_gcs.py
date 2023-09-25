@@ -28,6 +28,7 @@ def upload_to_gcs(bucket, object_name, local_file):
     #storage.blob._MAX_MULTIPART_SIZE = 5 * 1024 * 1024  # 5 MB
     #storage.blob._DEFAULT_CHUNKSIZE = 5 * 1024 * 1024  # 5 MB
     # End of Workaround
+    client = storage.Client.from_service_account_json(GOOGLE_APPLICATION_CREDENTIALS)
     client = storage.Client()
     bucket = client.bucket(bucket)
     blob = bucket.blob(object_name)
