@@ -59,12 +59,7 @@ with DAG(
     max_active_runs=1,
     tags=['upload-gcs']
 ) as dag:
-
-    download_dataset_task = PythonOperator(
-        task_id="download_dataset",
-        python_callable="download_samples_from_url",
-    )
-
+   
     
     local_to_gcs_task = PythonOperator(
         task_id="upload_to_gcs_task",
@@ -77,4 +72,5 @@ with DAG(
     )
 
     # Workflow for task direction
-    download_dataset_task >> local_to_gcs_task
+    local_to_gcs_task
+
