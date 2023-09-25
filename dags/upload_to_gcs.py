@@ -19,7 +19,7 @@ dataset_url_1 = (
 dataset_url_2 = (
     "https://raw.githubusercontent.com/enroliv/adios/main/data/chart-data.csv")
 dataset_file_1= "warehouse_and_details_sales.csv"
-dataset_file_2="chart-data.csv"
+dataset_file_2="chart_data.csv"
 # path_to_local_home = "/opt/airflow"
 #credentials_file = Path("service_account.json")
 
