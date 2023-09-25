@@ -14,10 +14,12 @@ import tempfile
 
 # constants
 bucket = 'africa-deb-bucket-second'
-dataset_url = [
-    "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv",
-    "https://raw.githubusercontent.com/enroliv/adios/main/data/chart-data.csv"]
-dataset_file= ["warehouse_and_details_sales.csv", "chart-data.csv"]
+dataset_url_1 = (
+    "https://data.montgomerycountymd.gov/resource/v76h-r7br.csv")
+dataset_url_2 = (
+    "https://raw.githubusercontent.com/enroliv/adios/main/data/chart-data.csv")
+dataset_file_1= "warehouse_and_details_sales.csv"
+dataset_file_2="chart-data.csv"
 # path_to_local_home = "/opt/airflow"
 #credentials_file = Path("service_account.json")
 
@@ -27,17 +29,20 @@ def download_samples_from_url(path: str) -> None:
     Args:
         path (str): Path to output file.
     """
-    for x in range(len(dataset_url),len(dataset_file)):
-        response = requests.get(dataset_url[x])
-        with open(dataset_file[x], mode="wb") as file[x]:
-            file[x].write(response[x].content)
+    response_1 = requests.get(dataset_url_1)
+    response_2 = requests.get(dataset_url_1)
+    with open(dataset_file_1, mode="wb") as file_1:
+            file_1.write(response_1.content)
+    with open(dataset_file_2, mode="wb") as file_2:
+            file_2.write(response_2.content)
 
 def upload_file_func():
     hook = GCSHook(gcp_conn_id='google_cloud_default')
     bucket_name = bucket
-    for gcs_file in dataset_file:
-        object_name = gcs_file
-        filename = Path(gcs_file)
+    dataset_file_list = [dataset_file_1, dataset_file_2]
+    for gcs_file in range(len(dataset_file_list)):
+        object_name = dataset_file_list[gcs_file]
+        filename = Path(dataset_file_list[gcs_file])
         hook.upload(bucket_name, object_name, filename)
         
 default_args = {
