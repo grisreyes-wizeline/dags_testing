@@ -27,9 +27,8 @@ def download_samples_from_url(path: str) -> None:
     Args:
         path (str): Path to output file.
     """
-    with open(path, "wb") as out:
-        response = requests.get(dataset_url)
-        out.write(response.content)
+    response = requests.get(dataset_url)
+    open(dataset_file, "wb").write(response.content)
 
 def upload_file_func():
      with tempfile.NamedTemporaryFile("wb+") as tmp:
