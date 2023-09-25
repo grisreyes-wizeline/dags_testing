@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.decorators import dag
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
 from google.cloud import storage
 import pyarrow.csv as pv
 from pathlib import Path
@@ -32,19 +32,14 @@ def download_samples_from_url(path: str) -> None:
         response = requests.get(dataset_url)
         out.write(response.content)
 
-def upload_to_gcs(bucket_name, destination_blob_name, credentials_file):
-    # Initialize the Google Cloud Storage client with the credentials
-    gcs_hook = GCSHook(gcp_conn_id='gcp_conn')
-    credentials_file = GCSHook(gcp_conn_id='gcp_conn').get_conn()
-    storage_client = storage.Client.from_service_account_json(credentials_file)
+def upload_file_func():
     with tempfile.NamedTemporaryFile("wb+") as tmp:
         download_samples_from_url(tmp.name)
-        # Get the target bucket
-        bucket = storage_client.bucket(bucket_name)
-        # Upload the file to the bucket
-        blob = bucket.blob(destination_blob_name)
-        source_file_path= blob.upload_from_filename(tmp.name)
-        print(f"File {source_file_path} uploaded to gs://{bucket_name}/{destination_blob_name}")
+        hook = GoogleCloudStorageHook()
+        source_bucket = bucket
+        source_object = dataset_file
+        hook.upload(source_bucket, source_object, tmp)
+
 
 default_args = {
     "owner": "airflow",
@@ -63,15 +58,9 @@ with DAG(
 ) as dag:
    
     
-    local_to_gcs_task = PythonOperator(
-        task_id="upload_to_gcs_task",
-        python_callable=upload_to_gcs,
-        op_kwargs={
-            "bucket_name": bucket,
-            "destination_blob_name": dataset_file,
-        },
-    )
+    upload_file = PythonOperator(task_id='upload_file', python_callable=upload_file_func)
 
     # Workflow for task direction
-    local_to_gcs_task
+    upload_file
+
 
