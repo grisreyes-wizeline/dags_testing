@@ -5,7 +5,7 @@ from airflow import DAG
 from airflow.decorators import dag
 from airflow.utils.dates import days_ago
 from airflow.operators.python import PythonOperator
-from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from google.cloud import storage
 import pyarrow.csv as pv
 from pathlib import Path
@@ -34,7 +34,7 @@ def download_samples_from_url(path: str) -> None:
 def upload_file_func():
     with tempfile.NamedTemporaryFile("wb+") as tmp:
         download_samples_from_url(tmp.name)
-        hook = GoogleCloudStorageHook()
+        hook = GCSHook()
         source_bucket = bucket
         source_object = dataset_file
         hook.upload(source_bucket, source_object, tmp)
